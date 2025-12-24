@@ -161,7 +161,6 @@ public class SearchTermService implements ISearchTermService {
     @CachePut(value = "searchTermById", key = "#result.data.id", condition = "#result.code == 201")
     public ApiResponse<SearchTermDto> createSearchTerm(SearchTermRequest request) {
 
-
         try {
             logger.debug("Creating search term with request {}", request);
 
