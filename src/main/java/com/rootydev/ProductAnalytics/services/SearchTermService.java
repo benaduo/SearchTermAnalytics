@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
@@ -143,6 +144,7 @@ public class SearchTermService implements ISearchTermService {
         }
     }
 
+    @CacheEvict(value = "searchTermById", key = "#id")
     public ApiResponse<Void> deleteSearchTermById(Long searchTermId) {
         try {
             logger.debug("Deleting search term with id {}", searchTermId);
