@@ -22,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
 import tools.jackson.databind.ObjectWriter;
 
@@ -153,7 +152,7 @@ public class SearchTermServiceTests {
 
     @Test
     @DisplayName("Should create search term successfully")
-    void createSearchTerm_WithValidRequest_ShouldReturnCreatedSearchTerm() throws Exception {
+    void createSearchTerm_WithValidRequest_ShouldReturnCreatedSearchTerm() {
         // Arrange
         ObjectWriter mockWriter = mock(ObjectWriter.class);
 
