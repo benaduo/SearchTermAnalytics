@@ -36,8 +36,8 @@ public class SearchTermController {
             )
     })
     public ApiResponse<PagedResult<SearchTermDto>> getSearchTerms(
-            @Parameter(description = "Page number (0-indexed)", example = "0")
-            @RequestParam(defaultValue = "0") int pageIndex,
+            @Parameter(description = "Page number", example = "0")
+            @RequestParam(defaultValue = "1") int pageIndex,
             @Parameter(description = "Number of items per page", example = "10")
             @RequestParam(defaultValue = "10") int pageSize
     ) {
