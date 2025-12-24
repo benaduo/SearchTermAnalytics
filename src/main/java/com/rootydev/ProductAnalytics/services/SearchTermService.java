@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -125,6 +126,7 @@ public class SearchTermService implements ISearchTermService {
 
     }
 */
+    @Cacheable(value = "searchTermById", key = "#searchTermId")
     public ApiResponse<SearchTermDto> getSearchTermById(Long searchTermId) {
         try {
             logger.debug("Getting search term with id {}", searchTermId);
@@ -156,6 +158,7 @@ public class SearchTermService implements ISearchTermService {
         }
     }
 
+    @CachePut(value = "searchTermById", key = "#result.data.id", condition = "#result.code == 201")
     public ApiResponse<SearchTermDto> createSearchTerm(SearchTermRequest request) {
 
 

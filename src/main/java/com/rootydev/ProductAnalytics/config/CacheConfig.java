@@ -16,7 +16,7 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager(
-                "searchTerms"
+                "searchTerms", "searchTermById"
         );
         cacheManager.setCaffeine(Caffeine.newBuilder()
                 .maximumSize(1000)
