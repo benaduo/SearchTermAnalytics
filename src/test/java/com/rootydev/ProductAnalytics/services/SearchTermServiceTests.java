@@ -22,7 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import tools.jackson.core.JacksonException;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectWriter;
 
 import java.time.Instant;
 import java.util.Collections;
@@ -153,11 +155,13 @@ public class SearchTermServiceTests {
     @DisplayName("Should create search term successfully")
     void createSearchTerm_WithValidRequest_ShouldReturnCreatedSearchTerm() throws Exception {
         // Arrange
+        ObjectWriter mockWriter = mock(ObjectWriter.class);
+
         when(searchTermMapper.toEntity(testSearchTermRequest)).thenReturn(testSearchTerm);
         when(searchTermRepository.save(any(SearchTerm.class))).thenReturn(testSearchTerm);
         when(searchTermMapper.toDto(testSearchTerm)).thenReturn(testSearchTermDto);
-//        when(objectMapper.writerWithDefaultPrettyPrinter()).thenReturn(objectMapper);
-//        when(objectMapper.writeValueAsString(any())).thenReturn("{}");
+        when(objectMapper.writerWithDefaultPrettyPrinter()).thenReturn(mockWriter);
+        when(mockWriter.writeValueAsString(any())).thenReturn("{}");
 
         // Act
         ApiResponse<SearchTermDto> result = searchTermService.createSearchTerm(testSearchTermRequest);
@@ -170,7 +174,10 @@ public class SearchTermServiceTests {
         verify(searchTermMapper).toEntity(testSearchTermRequest);
         verify(searchTermRepository).save(any(SearchTerm.class));
         verify(searchTermMapper).toDto(testSearchTerm);
+        verify(objectMapper).writerWithDefaultPrettyPrinter();
+        verify(mockWriter).writeValueAsString(any());
     }
+
 
     @Test
     @DisplayName("Should update search term successfully")
@@ -281,6 +288,5 @@ public class SearchTermServiceTests {
 
         verify(searchTermRepository).findAll(any(Pageable.class));
     }
-
 
 }
