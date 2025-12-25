@@ -6,6 +6,7 @@ import com.rootydev.ProductAnalytics.dtos.ApiResponse;
 import com.rootydev.ProductAnalytics.dtos.PagedResult;
 import com.rootydev.ProductAnalytics.dtos.SearchTermDto;
 import com.rootydev.ProductAnalytics.dtos.SearchTermRequest;
+import com.rootydev.ProductAnalytics.events.KafkaProducerService;
 import com.rootydev.ProductAnalytics.mappers.SearchTermMapper;
 import com.rootydev.ProductAnalytics.models.SearchTerm;
 import com.rootydev.ProductAnalytics.repositories.SearchTermRepository;
@@ -52,6 +53,8 @@ public class SearchTermServiceTests {
     @Mock
     private ObjectMapper objectMapper;
 
+    @Mock
+    private KafkaProducerService kafkaProducer;
 
     private SearchTermService searchTermService;
 
@@ -81,7 +84,8 @@ public class SearchTermServiceTests {
                 searchTermMapper,
                 actorSystem,
                 objectMapper,
-                auditLogActor);
+                auditLogActor,
+                kafkaProducer);
 
     }
 

@@ -5,6 +5,7 @@ import akka.actor.ActorSystem;
 import com.rootydev.ProductAnalytics.actors.AuditLogActor;
 import com.rootydev.ProductAnalytics.config.SpringExtension;
 import com.rootydev.ProductAnalytics.dtos.*;
+import com.rootydev.ProductAnalytics.events.KafkaProducerService;
 import com.rootydev.ProductAnalytics.mappers.SearchTermMapper;
 import com.rootydev.ProductAnalytics.models.SearchTerm;
 import com.rootydev.ProductAnalytics.repositories.SearchTermRepository;
@@ -36,8 +37,10 @@ public class SearchTermService implements ISearchTermService {
     private final ObjectMapper objectMapper;
     private final ActorSystem actorSystem;
 
+    private final KafkaProducerService kafkaProducerService;
+
     @Autowired
-    public SearchTermService(SearchTermRepository searchTermRepository, SearchTermMapper searchTermMapper, ActorSystem actorSystem, ObjectMapper objectMapper) {
+    public SearchTermService(SearchTermRepository searchTermRepository, SearchTermMapper searchTermMapper, ActorSystem actorSystem, ObjectMapper objectMapper, KafkaProducerService kafkaProducerService) {
         this.searchTermRepository = searchTermRepository;
         this.searchTermMapper = searchTermMapper;
         this.auditLogActor = actorSystem.actorOf(
@@ -46,6 +49,7 @@ public class SearchTermService implements ISearchTermService {
         );
         this.objectMapper = objectMapper;
         this.actorSystem = actorSystem;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     // Test constructor - package-private, used only in tests
@@ -53,12 +57,13 @@ public class SearchTermService implements ISearchTermService {
                       SearchTermMapper searchTermMapper,
                       ActorSystem actorSystem,
                       ObjectMapper objectMapper,
-                      ActorRef auditLogActor) {
+                      ActorRef auditLogActor, KafkaProducerService kafkaProducerService) {
         this.searchTermRepository = searchTermRepository;
         this.searchTermMapper = searchTermMapper;
         this.actorSystem = actorSystem;
         this.objectMapper = objectMapper;
         this.auditLogActor = auditLogActor;
+        this.kafkaProducerService = kafkaProducerService;
     }
 
     @Transactional(readOnly = true)
@@ -174,6 +179,7 @@ public class SearchTermService implements ISearchTermService {
             SearchTerm searchTerm = searchTermMapper.toEntity(request);
             searchTerm.setCreatedAt(Instant.now().toString());
             searchTermRepository.save(searchTerm);
+          //  kafkaProducerService.publishEvent("search-events", searchTermMapper.toDto(searchTerm));
             return ApiResponse.success(searchTermMapper.toDto(searchTerm));
         } catch (JacksonException e) {
             logger.error("Error creating search term: {}", e.getMessage());
